@@ -13,6 +13,7 @@ import 'model/signin_model.dart';
 import 'screens/navBar.dart';
 bool? isloggedin;
 String? loggedInUsername;
+String? loggedUserId;
 Future <void> main()async{
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
@@ -23,15 +24,16 @@ Future <void> main()async{
   Hive.registerAdapter(ProfileModelAdapter());
   Hive.registerAdapter(CommentModelAdapter());
 
-  await Hive.openBox<SignInModel>('signin'); 
+  await Hive.openBox <SignInModel>('signin'); 
   await Hive.openBox <AdminModel>('admin') ; 
-  await Hive.openBox<SheduleTripMode>('sheduleTrip');
+  await Hive.openBox <SheduleTripMode>('sheduleTrip');
   await Hive.openBox <FavModel>('favorite'); 
   await Hive.openBox <ProfileModel>('profile');
   await Hive.openBox <CommentModel>('comment');
 
   SharedPreferences prefs = await SharedPreferences.getInstance(); 
   bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+ 
 
   runApp(Myapp(isLoggedIn: isLoggedIn));
 }
@@ -51,7 +53,7 @@ Future <void> main()async{
         ),
        primarySwatch: Colors.amber
       ),
-     home: isLoggedIn ? NavBar() : SplashScreen(),  
+     home: isLoggedIn ? NavBar(userId: loggedUserId,) : SplashScreen(userId: loggedUserId),  
     );
   }
 }

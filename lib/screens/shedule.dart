@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:intl/intl.dart';
-import 'package:travel_app/functions/funtions.dart';
 import 'package:travel_app/model/shedule_model.dart';
 import 'package:travel_app/reuseable_widgets/reuseable_widgets.dart';
 class SheduledDetails extends StatefulWidget {
@@ -35,142 +34,152 @@ class _SheduledDetailsState extends State<SheduledDetails>{
           elevation: 0,
           backgroundColor: Colors.white,
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 15,right: 15),
-            child: Form(
-              key: _forKey,
-              child: Column(  
-                
-                children: [ 
-                  sizedBox(height: 20),
-                  TextFormField(
-                    onSaved: (newValue) {
-                      destination=newValue;
-                    },
-                    validator: (value) {
-                      if(value==null||value.isEmpty){
-                        return 'required';
-                      }return null;
-                    },
-                    decoration: const InputDecoration(
-                      suffixIcon: Icon(Icons.location_on,color: Colors.amber,),
-                      labelText: 'Add your destination',
-                      border: OutlineInputBorder(),
+        body: ScrollConfiguration(
+          behavior: const ScrollBehavior().copyWith(overscroll: false),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 15,right: 15),
+              child: Form(
+                key: _forKey,
+                child: Column(  
+                  
+                  children: [ 
+                    sizedBox(height: 20),
+                    TextFormField(
+                      onSaved: (newValue) {
+                        destination=newValue;
+                      },
+                      validator: (value) {
+                        if(value==null||value.isEmpty){
+                          return 'required';
+                        }return null;
+                      },
+                      decoration: const InputDecoration(
+                        suffixIcon: Icon(Icons.location_on,color: Colors.amber,),
+                        labelText: 'Add your destination',
+                        border: OutlineInputBorder(),
+                      ),
                     ),
-                  ),
+                    
+                    sizedBox(height:20 ),
+              
+                      const  Row(children: [ Text('Shedule Trip',style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),)]), 
+                    
+                     sizedBox(height: 15), 
                   
-                  sizedBox(height:20 ),
-            
-                    const  Row(children: [ Text('Shedule Trip',style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),)]), 
-                  
-                   sizedBox(height: 15), 
-                
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [InkWell(
-                      onTap: () {
+                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [InkWell(
+                        onTap: () {
+                          startingDatePicker();
+                        },
+                        child: Text("Starting Date: ${startingDate ?? 'dd-MM-yyyy'} ",
+                        style:const TextStyle(fontSize: 16),),
+                      ),
+                      IconButton(onPressed: (){
                         startingDatePicker();
                       },
-                      child: Text("Starting Date: ${startingDate ?? 'dd-MM-yyyy'} ",
-                      style:const TextStyle(fontSize: 16),),
-                    ),
-                    IconButton(onPressed: (){
-                      startingDatePicker();
-                    },
-                     icon:const Icon(Icons.calendar_month,color: Colors.amber,))
-                    ]),
-            
-                    const Divider(thickness:0.5),
-                   
-            
-                    sizedBox(height: 10 ),
-                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [InkWell(
-                      onTap: () {
-                        endingDatePicker();
-                      },
-                      child: Text("Ending Date: ${endingDate ?? 'dd-MM-yyyy'} ",
-                      style:const TextStyle(fontSize: 16),),
-                    ),
-                    IconButton(onPressed: (){
-                      endingDatePicker();
-                    }, 
-                    icon:const Icon(Icons.calendar_month,color: Colors.amber,))
-                  ]),
-            
-                   const Divider(thickness:0.5),
-            
-            
-                      const Row(children: [ Text('Companions',style:TextStyle(fontSize: 20,fontWeight: FontWeight.w600),)]),
-                       sizedBox(height:5),
-                      
-                      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween ,
-                        children: [
-                         InkWell(onTap: () {
-                           addCompanionFromContact();
-                         }, child: const Text('Select from contacts',style: TextStyle(fontSize:16 ),)),
-                        IconButton(onPressed: (){
-                          addCompanionFromContact();
-                        },
-                         icon:const Icon(Icons.contacts,color: Colors.amber,) 
-                         ),
-                        ],
-                      ),
-                      const Divider(thickness:0.5),  
-            
-                     sizedBox(height: 10),
-            
-                    AspectRatio(
-                    aspectRatio:100/33,
-                   child: companion.isNotEmpty ? ListView.separated(
-                      itemBuilder: (context, index) {
-            
-                        return  Text(" ${index+1}.  ${companion[index]}",style:const TextStyle(fontSize: 16),);
-                      },
-                      separatorBuilder: (context, index) =>const Divider(thickness: 0.3,),
-                      itemCount: companion.length 
-                      ) : const Center(
-                        child: Text("No companion added"),
-                      )
-                    ),
+                       icon:const Icon(Icons.calendar_month,color: Colors.amber,))
+                      ]),
+              
                       const Divider(thickness:0.5),
-                     sizedBox(height: 10 ),
-                     const  Row(children: [ Text('Expected budget',style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),)]), 
-                     sizedBox(height: 20 ), 
-                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(width: 175,  height: 70,
-                        child: TextFormField(
-                          onSaved: (newValue) {
-                            budget=int.parse(newValue!);
+                     
+              
+                      sizedBox(height: 10 ),
+                     Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [InkWell(
+                        onTap: () {
+                          endingDatePicker();
+                        },
+                        child: Text("Ending Date: ${endingDate ?? 'dd-MM-yyyy'} ",
+                        style:const TextStyle(fontSize: 16),),
+                      ),
+                      IconButton(onPressed: (){
+                        endingDatePicker();
+                      }, 
+                      icon:const Icon(Icons.calendar_month,color: Colors.amber,))
+                    ]),
+                     const Divider(thickness:0.5),
+                        const Row(children: [ Text('Companions',style:TextStyle(fontSize: 20,fontWeight: FontWeight.w600),)]),
+                         sizedBox(height:5),
+                        
+                        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween ,
+                          children: [
+                           InkWell(onTap: () {
+                             addCompanionFromContact();
+                           }, child: const Text('Select from contacts',style: TextStyle(fontSize:16 ),)),
+                          IconButton(onPressed: (){
+                            addCompanionFromContact();
                           },
-                          validator: (value) {
-                      if(value==null||value.isEmpty){
-                        return 'required';
-                      }return null;
-                         },
-                          keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                            suffixIcon: Icon(Icons.payment,color: Colors.amber,),
-                             labelText: 'Budget',
-                            border: OutlineInputBorder(),
+                           icon:const Icon(Icons.contacts,color: Colors.amber,) 
+                           ),
+                          ],
+                        ),
+                        const Divider(thickness:0.5),  
+              
+                       sizedBox(height: 10),
+              
+                      AspectRatio(
+                      aspectRatio:100/33,
+                     child: companion.isNotEmpty ? ListView.separated(
+                        itemBuilder: (context, index) {
+              
+                          return  
+                          Row(children: [
+                            Text(" ${index+1}.  ${companion[index]}"),
+                             IconButton(onPressed: (){
+                              if(companion.isNotEmpty){
+                                companion.removeAt(index);
+                                setState(() {});
+                              }
+                            },
+                             icon:const Icon(Icons.delete,size: 20,color: Colors.grey,)),
+                          ],);
+                        },
+                        separatorBuilder: (context, index) =>const Divider(thickness: 0.3,),
+                        itemCount: companion.length 
+                        ) : const Center(
+                          child: Text("No companion added"),
+                        )
+                      ),
+                        const Divider(thickness:0.5),
+                       sizedBox(height: 10 ),
+                       const  Row(children: [ Text('Expected budget',style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),)]), 
+                       sizedBox(height: 20 ), 
+                     Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(width: 175,  height: 70,
+                          child: TextFormField(
+                            onSaved: (newValue) {
+                              budget=int.parse(newValue!);
+                            },
+                            validator: (value) {
+                        if(value==null||value.isEmpty){
+                          return 'required';
+                        }return null;
+                           },
+                            keyboardType: TextInputType.number,
+                            decoration: const InputDecoration(
+                              suffixIcon: Icon(Icons.payment,color: Colors.amber,),
+                               labelText: 'Budget',
+                              border: OutlineInputBorder(),
+                            ),
                           ),
                         ),
-                      ),
-                      
-                    ],
-                  ),
-                   
-                 sizedBox(height: 20),
-            
-                 
-                 ElevatedButton(
-                  onPressed: (){
-                    addSheduleDAta();
-                  },
-                 child:const Text("Add Trip Plan",style: TextStyle(color: Colors.white),)),
-                 sizedBox(height: 20),
-                ], 
+                        
+                      ],
+                    ),  
+                   sizedBox(height: 20),
+                   ElevatedButton(
+                    onPressed: (){
+                       {
+                       addSheduleDAta();
+                      }
+                     
+                    },
+                   child:const Text("Add Trip Plan",style: TextStyle(color: Colors.white),)),
+                   sizedBox(height: 20),
+                  ], 
+                ),
               ),
             ),
           ),
@@ -178,8 +187,6 @@ class _SheduledDetailsState extends State<SheduledDetails>{
       ),
     );
   }
-   
-
        //////functions//////
 
      addSheduleDAta(){
@@ -203,9 +210,6 @@ class _SheduledDetailsState extends State<SheduledDetails>{
         }
      }
    
-
-
-
   startingDatePicker() {
    showDatePicker(
     context: context,
@@ -222,9 +226,28 @@ class _SheduledDetailsState extends State<SheduledDetails>{
   });
 }
 
- 
+bool isEndingDateValid(DateTime endingDate) {
+  // Get the current date
+  DateTime currentDate = DateTime.now();
 
- endingDatePicker() {
+  // Define the restriction for upcoming trips (e.g., 30 days from the current date)
+  DateTime allowedEndDate = currentDate.add(const Duration(days: 30));
+
+  // Check if the selected ending date is within the allowed range
+  if (endingDate.isBefore(currentDate) || endingDate.isAfter(allowedEndDate)) {
+    showSnackBar(
+      context: context,
+      message: 'Ending date must be within 30 days from the current date.',
+      snakBarclr: Colors.red,
+    );
+    return false;
+  }
+
+  return true;
+}
+
+// Modify your endingDatePicker function to use the validation
+endingDatePicker() {
   showDatePicker(
     context: context,
     initialDate: DateTime.now(),
@@ -232,13 +255,17 @@ class _SheduledDetailsState extends State<SheduledDetails>{
     lastDate: DateTime(2055),
   ).then((value) {
     setState(() {
-      if(value!=null){
+      if (value != null) {
         endingDate = DateFormat('dd-MMM-yyyy').format(value);
+
+        if (!isEndingDateValid(value)) {
+          endingDate = null; 
+        }
       }
-        
-      });
+    });
   });
 }
+
   
 void addCompanionFromContact() async {
   bool permission = await FlutterContactPicker.requestPermission();
@@ -260,7 +287,6 @@ void addCompanionFromContact() async {
     }
   }
 }
-
     void resetFields() {
     setState(() {
       _forKey.currentState?.reset();

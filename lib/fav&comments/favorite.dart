@@ -24,7 +24,6 @@ class _FavoriteState extends State<Favorite> {
     favBox = Hive.box<FavModel>('favorite');
     favboxList = favBox!.values.toList();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,9 +60,7 @@ class _FavoriteState extends State<Favorite> {
                   subtitle: Text(favorite.location!),
                   trailing: IconButton(
                     onPressed: () {
-                      // Delete the favorite from favBox
                       favBox!.delete(favorite.placekey);
-                      // Update the favboxList
                       setState(() {
                         favboxList!.removeAt(index);
                       });

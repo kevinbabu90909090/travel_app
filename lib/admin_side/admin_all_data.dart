@@ -96,7 +96,6 @@ class _AdminAllDataState extends State<AdminAllData> {
     );
   }
 
-  //////function//// 
  
   
 

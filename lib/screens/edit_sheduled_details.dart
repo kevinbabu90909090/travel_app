@@ -31,7 +31,7 @@ class _EditSheduledDetailsState extends State<EditSheduledDetails> {
               ),
             ):  Padding(padding:const EdgeInsets.only(top: 10 ),
         child: ListView.builder(
-          itemBuilder: (context, index) {
+          itemBuilder: (context, index){
             final data = sheduleBox.getAt(index) as SheduleTripMode; 
             return  
              Container(
@@ -48,7 +48,7 @@ class _EditSheduledDetailsState extends State<EditSheduledDetails> {
                     )
                   ] ,
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(20 ),              
+                borderRadius: BorderRadius.circular(20),              
               ), 
               child: Column(
                 children: [

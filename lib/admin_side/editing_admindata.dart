@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:travel_app/admin_side/admin_all_data.dart';
-import 'package:travel_app/functions/funtions.dart';
+import 'package:travel_app/functions/hive_functions.dart';
 import 'package:travel_app/model/admin_model.dart';
 import 'package:travel_app/reuseable_widgets/reuseable_widgets.dart';
 
@@ -155,7 +155,6 @@ class _AdminDataAddingPageState extends State<EditPlaceDetails> {
                        ),
                      ),
                        sizedBox(width: 10), 
-
                        Expanded(
                          child: Container( 
                                              margin:const EdgeInsets.only(top: 10),
@@ -177,7 +176,6 @@ class _AdminDataAddingPageState extends State<EditPlaceDetails> {
                                             ),
                        ),
                   ],),
-          
                   sizedBox(height: 10), 
                    SizedBox(         
                      child: Row(
@@ -213,7 +211,7 @@ class _AdminDataAddingPageState extends State<EditPlaceDetails> {
                   hintText: 'Place Name ',
                   border: OutlineInputBorder() 
                  ),
-                ),
+                ), 
 
                 sizedBox(height: 20),
 
@@ -272,32 +270,30 @@ class _AdminDataAddingPageState extends State<EditPlaceDetails> {
 
  ///////////functions///////////////
 
- void updatePlaceDetails() {
-  if (_formKey.currentState!.validate()) {
-    _formKey.currentState?.save();
+void updatePlaceDetails() {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState?.save();
 
-    // Update the data in Hive
-    final updatedDetails = AdminModel(placeKey: widget.editDetails.placeKey,
-      imgUrl: _image?.path ?? widget.editDetails.imgUrl,
-      placeName: _placeName ?? widget.editDetails.placeName,
-      location: _location ?? widget.editDetails.location,
-      discription: _discription ?? widget.editDetails.discription,
-      imgUrl1: _image1?.path ?? widget.editDetails.imgUrl1,
-      imgUrl2: _image2?.path ?? widget.editDetails.imgUrl2,
-      imgUrl3: _image3?.path ?? widget.editDetails.imgUrl3,
-      catagorys: _selectedValue 
-    );
+      // Update the data in Hive
+      final updatedDetails = AdminModel(
+        placeKey: widget.editDetails.placeKey,
+        imgUrl: _image?.path ?? widget.editDetails.imgUrl,
+        placeName: _placeName ?? widget.editDetails.placeName,
+        location: _location ?? widget.editDetails.location,
+        discription: _discription ?? widget.editDetails.discription,
+        imgUrl1: _image1?.path ?? widget.editDetails.imgUrl1,
+        imgUrl2: _image2?.path ?? widget.editDetails.imgUrl2,
+        imgUrl3: _image3?.path ?? widget.editDetails.imgUrl3,
+        catagorys: _selectedValue 
+      );
 
-    // Get the index of the item in the Hive box
-    int index = Hive.box<AdminModel>('admin').values.toList().indexOf(widget.editDetails);
+      // Use the update function from the HiveFunctions file
+      HiveFunctions.updateAdminModel(Hive.box<AdminModel>('admin'), widget.editDetails, updatedDetails);
 
-    // Update the specific item in Hive using putAt
-    Hive.box<AdminModel>('admin').putAt(index, updatedDetails);
-
-    showSnackBar(context: context, message: 'Updated Successfully', snakBarclr: Colors.green);
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>const AdminAllData(),)) ;
+      showSnackBar(context: context, message: 'Updated Successfully', snakBarclr: Colors.green);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>const AdminAllData(),));
+    }
   }
-}
 
   getImage()async{
     // ignore: invalid_use_of_visible_for_testing_member

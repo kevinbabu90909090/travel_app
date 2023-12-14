@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
-import 'package:travel_app/functions/funtions.dart';
 import 'package:travel_app/model/shedule_model.dart';
 import '../reuseable_widgets/reuseable_widgets.dart';
 

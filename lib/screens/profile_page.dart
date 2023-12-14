@@ -1,38 +1,43 @@
 
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:hive/hive.dart';
+import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_app/fav&comments/favorite.dart';
+import 'package:travel_app/model/profilemodel.dart';
 import 'package:travel_app/reuseable_widgets/reuseable_widgets.dart';
 import 'package:travel_app/screens/about_page.dart';
 import 'package:travel_app/screens/edit_sheduled_details.dart';
+import 'package:travel_app/screens/privacy.dart';
+import 'package:travel_app/screens/profile_edit.dart';
 
 
+// ignore: must_be_immutable
 class Profile extends StatefulWidget {
-   const Profile({super.key});
+    Profile({super.key,required this.userid});
+  String? userid;
 
   @override
   State<Profile> createState() => _ProfileState();
-}
-
+} 
 class _ProfileState extends State<Profile> {
 
+late Box<ProfileModel> profileBox ;
     String? loggedInUsername;
+    String? loggedInUserId; 
      @override
-  void initState() {
+   void initState() {
     super.initState();
     loadUsername();
-  
+    profileBox = Hive.box<ProfileModel>('profile');
+   
   }
-
-  Future<void> loadUsername() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    loggedInUsername = prefs.getString('loggedInUsername') ?? ''; 
-    setState(() {}); 
-  } 
-  XFile? profilePic;
+  
+  
   @override
   Widget build(BuildContext context) { 
+    debugPrint('user id in profile page:${widget.userid}');
     return Scaffold(
       backgroundColor:const Color.fromARGB(10, 255, 193, 7),
       appBar: AppBar( 
@@ -45,75 +50,83 @@ class _ProfileState extends State<Profile> {
              Icon(Icons.person,color: Colors.amber,size: 27,)
              ]),
       ),
-      body:Padding(padding:const EdgeInsets.all(18 ), 
-        child: SingleChildScrollView(
-          child: Column(children: [
-               Container(
-                padding:const EdgeInsets.all(20),
-                height: 140,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                color:Colors.white,
-                borderRadius: BorderRadius.circular(25), 
-                ),
-                child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                  SizedBox(
-                    height: double.infinity,
-                    width: 100 ,
-                    child: GestureDetector( 
-                      onTap: () {
-                        profileImageTaking();
-                      },
-                      child: ClipRRect( 
-                        borderRadius: BorderRadius.circular(15),
-                        child: Image.asset('images/placeholder.png',fit: BoxFit.cover,),
-                    ),
-                    )
+      body:Padding(padding:const EdgeInsets.all(18), 
+        child: ScrollConfiguration(
+          behavior:const ScrollBehavior().copyWith(overscroll: false),
+          child: SingleChildScrollView(
+            child: Column(children: [
+                 Container(
+                  padding:const EdgeInsets.all(20),
+                  height: 140,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                  color:Colors.white,
+                  borderRadius: BorderRadius.circular(25), 
                   ),
-                    Flexible(child: Text(loggedInUsername??'',style:const TextStyle(fontSize:22 ),)),
-                   sizedBox(width: 40),
-                   
-                ],),
-               ),
+                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [ 
+                    Stack(
+                      children: [
+                        SizedBox(
+                          height: 90,
+                          width: 100 ,
+                          child: ClipRRect( 
+                            borderRadius: BorderRadius.circular(15),
+                           child:profileBox.isNotEmpty
+                                  ? InstaImageViewer(child: Image.file(File(profileBox.getAt(0)!.image.toString()), fit: BoxFit.cover,))  
+                                  : Image.asset('images/placeholder.png', fit: BoxFit.cover,),    
+                          )
+                        ),
+                        Positioned(bottom: 0,right: 0,
+                          child: IconButton(onPressed: (){
+                                            Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfile(userid: widget.userid),));
+                                           },
+                                            icon:const Icon(Icons.add_a_photo_outlined,color: Colors.black,)),
+                        )
+                      ],
+                    ),
+                     
+                     Flexible(child: Text(loggedInUsername??'',style:const TextStyle(fontSize:22 ),)),
+                    const Icon(Icons.abc,color: Colors.white,)
+                      
+                  ],),
+                 ),
+          
+                 profileItems(icon: Icons.favorite, text:'F a v o u r i t e',ontap: () {
+                   Navigator.push(context, MaterialPageRoute(builder: (context) =>const Favorite() ,));
+                 },),
         
-               profileItems(icon: Icons.favorite, text:'F a v o r i t e',ontap: () {
-                 Navigator.push(context, MaterialPageRoute(builder: (context) =>const Favorite() ,));
-               },),
-
-               profileItems(icon: Icons.list_alt_rounded, text:'S c h e d u l e d  L i s t',ontap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) =>const EditSheduledDetails() ,));
-               },),
-               profileItems(icon: Icons.share_rounded, text:'S h a r e'),
-               profileItems(icon: Icons.info_rounded, text:'A b o u t',ontap: () {
-                 Navigator.push(context, MaterialPageRoute(builder: (context) =>const AboutPage() ,));
-               },),
-               profileItems(icon: Icons.logout_rounded, text:'L o g  O u t',ontap: () {
-                 singOut(context);
-               },),
-        
-               
-          ],),
+                 profileItems(icon: Icons.list_alt_rounded, text:'S c h e d u l e d  L i s t',ontap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) =>const EditSheduledDetails() ,));
+                 },),
+                 profileItems(icon: Icons.share_rounded, text:'S h a r e'),
+                 profileItems(icon: Icons.privacy_tip_rounded, text: 'P r i v a c y  P o l i c y',ontap: () {
+                   Navigator.push(context, MaterialPageRoute(builder: (context) =>const PrivacyPolicy() ,));
+                 },), 
+                 profileItems(icon: Icons.info_rounded, text:'A b o u t',ontap: () {
+                   Navigator.push(context, MaterialPageRoute(builder: (context) =>const AboutPage() ,));
+                 },),
+                 profileItems(icon: Icons.logout_rounded, text:'L o g  O u t',ontap: () {
+                   singOut(context);
+                 },),
+                 
+                sizedBox(height: 20), 
+            ],),
+          ),
         ),
       )
     );
   }
+  Future<void> loadUsername() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    loggedInUsername = prefs.getString('loggedInUsername') ?? ''; 
+    setState(() {}); 
+  } 
 
-    profileImageTaking()async{
-    
-      // ignore: invalid_use_of_visible_for_testing_member
-      final image=await ImagePicker.platform.getImageFromSource(source: ImageSource.gallery);
-      setState(() {
-       if(image!=null){
-         profilePic=image;
-       }
-      });
-      
-    }
-
-   
+ 
+ 
 }
 
 
 
- 
+

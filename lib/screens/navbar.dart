@@ -22,7 +22,7 @@ class _HomeScreenState extends State<NavBar> {
   @override
   void initState() {
     super.initState();
-    debugPrint('userid: ${widget.userId}');
+    debugPrint('userid in nav bar: ${widget.userId}');
   }
 
   @override
@@ -32,7 +32,7 @@ class _HomeScreenState extends State<NavBar> {
      PlacesList(userId: widget.userId),
      const SheduledDetails(),
      const EditSheduledDetails(),
-     const Profile(),
+      Profile(userid: widget.userId),
     ];
 
     return Scaffold(

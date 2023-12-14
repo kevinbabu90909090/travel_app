@@ -2,12 +2,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:travel_app/functions/funtions.dart';
+import 'package:travel_app/functions/hive_functions.dart';
 import 'package:travel_app/model/admin_model.dart';
 import 'package:travel_app/reuseable_widgets/reuseable_widgets.dart';
-
- 
-
 
 class AdminDataAddingPage extends StatefulWidget {
    const AdminDataAddingPage({super.key});
@@ -15,14 +12,13 @@ class AdminDataAddingPage extends StatefulWidget {
   @override
   State<AdminDataAddingPage> createState() => _AdminDataAddingPageState();
 }
-
 class _AdminDataAddingPageState extends State<AdminDataAddingPage> { 
      String? _placeName;
      String? _location; 
      String? _discription;
      XFile? _image; 
      XFile? _image1;
-     XFile? _image2;
+     XFile? _image2; 
      XFile? _image3;
      String _selectedValue='All';
      final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -38,11 +34,9 @@ class _AdminDataAddingPageState extends State<AdminDataAddingPage> {
       'Forest',
       'Desert',
      ];
-  
+   
    Box adminBox=Hive.box<AdminModel>('admin');
    
-  
-
   @override
   Widget build(BuildContext context) { 
     return GestureDetector(
@@ -188,8 +182,7 @@ class _AdminDataAddingPageState extends State<AdminDataAddingPage> {
                    ),
     
                     sizedBox(height: 10),
-    
-                  TextFormField(
+                      TextFormField(
                     onSaved:(newValue) {
                       _placeName=newValue;
                     }, 
@@ -204,9 +197,7 @@ class _AdminDataAddingPageState extends State<AdminDataAddingPage> {
                     border: OutlineInputBorder() 
                    ),
                   ),
-    
                   sizedBox(height: 20),
-    
                   TextFormField(
                     onSaved: (newValue) {
                       _location=newValue;
@@ -222,9 +213,7 @@ class _AdminDataAddingPageState extends State<AdminDataAddingPage> {
                     border: OutlineInputBorder() 
                    ),
                   ),
-    
                   sizedBox(height: 20),
-    
                   TextFormField(
                     maxLines: 5,
                     onSaved: (newValue) {
@@ -241,13 +230,12 @@ class _AdminDataAddingPageState extends State<AdminDataAddingPage> {
                     border: OutlineInputBorder() 
                    ),
                   ),
-    
                   sizedBox(height: 30),
-                    
-                   
+  
                    OutlinedButton.icon(
                     onPressed: (){
                       addingAdminData();
+                        
                     },
                      icon:const Icon(Icons.add),
                       label:const Text('Add Place',style: TextStyle(color: Colors.black ),))
@@ -259,21 +247,16 @@ class _AdminDataAddingPageState extends State<AdminDataAddingPage> {
       ),
     );
   }
-
-
   ////////functions/////////////
 
-
-  
  addingAdminData() {
   final isValid = _formKey.currentState?.validate();
   if (isValid != null && isValid) {
     _formKey.currentState?.save(); 
     String key = DateTime.now().millisecondsSinceEpoch.toString();
     if (_image != null&&_image1!=null&&_image2!=null&&_image3!=null) {
-      adminBox.put(key,
-        AdminModel(
-          catagorys: _selectedValue,
+      adminBox.put(key,AdminModel(
+        catagorys: _selectedValue,
           imgUrl: _image!.path,
           placeName: _placeName!,
           location: _location!,
@@ -284,46 +267,50 @@ class _AdminDataAddingPageState extends State<AdminDataAddingPage> {
           placeKey: key,
           ));
           showSnackBar(context: context, message:'Added Succesfuly',snakBarclr: Colors.green);
-          _resetForm();
+         resetForm();
           
     } else {
       showSnackBar(context: context, message: 'Select an image',snakBarclr: Colors.red);
     }
   }
 }
-
-  getImage()async{
-    // ignore: invalid_use_of_visible_for_testing_member
-    final image=await ImagePicker.platform.getImageFromSource(source: ImageSource.gallery);
-    setState(() {
-      _image=image;
-    });
+  void getImage() {
+    AdminDataFunctions.getImage(
+      setImage: (image) {
+        setState(() {
+          _image = image;
+        });
+      },
+    );
   }
-  getImage1()async{
-    // ignore: invalid_use_of_visible_for_testing_member
-    final image=await ImagePicker.platform.getImageFromSource(source: ImageSource.gallery);
-    setState(() {
-      _image1=image;
-    });
+  void getImage1() {
+    AdminDataFunctions.getImage(
+      setImage: (image) {
+        setState(() {
+          _image1 = image;
+        });
+      },
+    );
   }
-
-  getImage2()async{
-    // ignore: invalid_use_of_visible_for_testing_member
-    final image=await ImagePicker.platform.getImageFromSource(source: ImageSource.gallery);
-    setState(() {
-      _image2=image; 
-    });
+  void getImage2() {
+    AdminDataFunctions.getImage(
+      setImage: (image) {
+        setState(() {
+          _image2 = image;
+        });
+      },
+    );
   }
-
-  getImage3()async{
-    // ignore: invalid_use_of_visible_for_testing_member
-    final image=await ImagePicker.platform.getImageFromSource(source: ImageSource.gallery);
-    setState(() {
-      _image3=image;
-    });
+  void getImage3() {
+    AdminDataFunctions.getImage(
+      setImage: (image) {
+        setState(() {
+          _image3 = image;
+        });
+      },
+    );
   }
-
- void _resetForm() {
+ void resetForm() {
   setState(() {
     _placeName = null;
     _location = null;

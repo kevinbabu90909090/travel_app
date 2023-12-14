@@ -154,7 +154,7 @@ class _PlacesListState extends State<PlacesList> {
                                   fit: BoxFit.cover,
                                 ),
                               ),
-                            ),
+                            ), 
                           ),
                           title: Text(data.placeName, style: const TextStyle(fontSize: 18)),
                           subtitle: Row(
@@ -214,7 +214,6 @@ class _PlacesListState extends State<PlacesList> {
   String placeKey = data.placeKey;
   // Check if the item is already in favorites
   bool isFavorite = favbox?.containsKey(placeKey) ?? false;
-
   setState(() {
     if (isFavorite) {
       // If it's in favorites, remove it
@@ -235,5 +234,5 @@ class _PlacesListState extends State<PlacesList> {
   });
   return data;
 }
-
+    
 }

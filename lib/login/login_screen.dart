@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/adapters.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:travel_app/admin_side/admin_navbar.dart';
-import 'package:travel_app/main.dart';
-import '../functions/funtions.dart';
-import '../model/signin_model.dart';
+import 'package:travel_app/functions/hive_functions.dart';
 import '../reuseable_widgets/reuseable_widgets.dart';
-import '../screens/navBar.dart';
 import '../sign_up/signup_screen.dart';
 
 class LoginPage extends StatefulWidget {
@@ -25,7 +19,6 @@ class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
    bool error=false;
-  Box signInBox=Hive.box<SignInModel>('signin');  
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +38,6 @@ class _LoginPageState extends State<LoginPage> {
                        appNAme(),
                        appNameDownTxt(),
                        sizedBox(height: 50),         
-
                        buildTextFormField(
                         controller:_usernameController , 
                         labelText: "Username",  
@@ -61,13 +53,14 @@ class _LoginPageState extends State<LoginPage> {
                       setState(() {
                         if(error){
                           error=true;
-                        }
+                        } 
                       });
                     }), 
                     
                        sizedBox(height: 15,),
 
                        buildTextFormField(
+                        hidepassword: true,
                         controller:_passwordController , 
                         labelText: "password",  
                         validator: (value) {
@@ -85,16 +78,17 @@ class _LoginPageState extends State<LoginPage> {
                         }
                       });
                     }),
-              
-                        const SizedBox(height: 15,),
-                        
+                        const SizedBox(height: 15,), 
                        ElevatedButton(
                          onPressed: ()async{
-                         loginCheck();
+                         LoginService.loginCheck(
+                          context: context, 
+                          usernameController: _usernameController, 
+                          passwordController: _passwordController, 
+                          formKey: _formKey);
                             },
                        child:const Text('        LOG IN        ',
                        style: TextStyle(color: Colors.white),)),
-              
                        Row(mainAxisAlignment: MainAxisAlignment.center, 
                        children: [const Text("You don't have account?", 
                        style: TextStyle(color: Colors.grey),),
@@ -111,51 +105,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
 
-  }
-
-  /////function//////
-
-
- Future<void> loginCheck() async {
-  var signInData = signInBox.values.cast<SignInModel>().toList();
-  String enteredUsername = _usernameController.text.trim();
-  String enteredPassword = _passwordController.text.trim();
-
-  if (enteredUsername == '@admin' && enteredPassword == 'admin123') {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => AdminNavbar()),
-    );
-    return; 
-  }
-  
-  if (_formKey.currentState!.validate() ){
-     SignInModel loggedInUser = signInData.firstWhere((data) => data.userName == enteredUsername && data.password == enteredPassword);
-
-     // ignore: unnecessary_null_comparison
-     if (loggedInUser !=null) {
-
-     var loggedInUserKey = signInBox.keyAt(signInData.indexOf(loggedInUser)).toString();
-
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setBool('isLoggedIn', isloggedin=true);
-       loggedInUsername = _usernameController.text.trim();
-       prefs.setString('loggedInUsername', loggedInUsername!);      
-      Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) =>  NavBar(userId: loggedInUserKey,)),);
-      return; 
-    } 
-  }else {
-      
-      showSnackBar(
-        context: context,
-        message: 'Username and password do not match',
-        snakBarclr: Colors.red,
-      );
-    }
-}
-
-
-
+  }  
 }
 
 

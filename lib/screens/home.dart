@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:travel_app/fav&comments/comments.dart';
 import 'package:travel_app/fav&comments/favorite.dart';
-
 import '../reuseable_widgets/reuseable_widgets.dart';
 
 class Home extends StatelessWidget {
-  const Home({Key? key});
+  const Home({super.key, });
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +21,7 @@ class Home extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => Favorite(),));
+              Navigator.push(context, MaterialPageRoute(builder: (context) =>const Favorite(),));
             },
             icon: const Icon(
               Icons.favorite_border_outlined,
@@ -31,16 +29,7 @@ class Home extends StatelessWidget {
               size: 28,
             ),
           ),
-          IconButton(
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) =>const Commennts(),));
-            },
-            icon: const Icon(
-              Icons.chat,
-              color: Colors.amber,
-              size: 28,
-            ),
-          ),
+        
         ],
         elevation: 0,
         backgroundColor: Colors.white,

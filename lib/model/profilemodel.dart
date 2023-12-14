@@ -9,6 +9,8 @@ class ProfileModel{
 
     @HiveField(1)
   String? key;
+  @HiveField(1)
+  String? justText;
 
-  ProfileModel({required this.image,required this.key});
+  ProfileModel({ this.image, this.key,this.justText});
 }

@@ -4,7 +4,8 @@ import '../sign_up/signup_screen.dart';
 import 'login_screen.dart';
 
 class FirstPage extends StatelessWidget {
-  const FirstPage({super.key});
+  final String? userId;
+  const FirstPage({super.key,required this.userId});
 
   @override
   Widget build(BuildContext context) {
